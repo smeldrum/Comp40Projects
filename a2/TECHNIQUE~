@@ -1,0 +1,16 @@
+Assignment 2: Part E
+A Technique We Hope to Develop
+As Comp 40 students who are becoming more fluent in programming and its 
+concepts, sometimes we feel as if one of our main hindrances is the
+environment in which we are working with the code.  Although we find
+that the Kate Editor is aesthetically pleasing and allows us to
+compile within the interface, many past Comp 40 students (and current
+TA's) recommend VIM as a next step in our development as computer
+programmers.
+Because of this, we have researched some of the components that make
+VIM so invaluable to computer programmers.  Some benefits include:
+- The rich library of macros available to use at our disposal.  Although
+it might take a bit to learn, it can make certain aspects of coding (copy
+/pasting lines of code, duplicating lines, automated search and replace, 
+etc.) so much more streamlined, and thus makes the burden of actually putting
+ down on the text editor diminish quite a bit.  

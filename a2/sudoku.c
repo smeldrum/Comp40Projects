@@ -1,0 +1,154 @@
+/*************************************************
+Sudoku Completion Checker
+Spencer Meldrum and Tim Alander
+
+This program takes in as input a pgm that we then parse and place
+into a "2-D UArray".  The elements are then check to see if they form
+a valid Sudoku solution (specifications provided in the README). If
+it is a solution, this program will return 0.  Otherwise, it will exit(1) on
+a failure of an assertion.
+
+*************************************************/
+#include <stdio.h>
+#include <stdlib.h>
+#include "pnmrdr.h"
+#include "pnm.h"
+#include "stackoverflow.h"
+#include "bitpack.h"
+#include "assert.h"
+#include "uarray2.h"
+
+/*************************************************
+Function: set_sudoku_values
+Arguments: pointer to an element in the sudoku element and a pointer to
+the pgm file
+Purpose: This apply function will be called by map row major to set all the
+values of the pgm to the values in our UArray
+*************************************************/
+static void set_sudoku_values(void * sudoku_element, void* pnmfile);
+/*************************************************
+Function:check_file
+Arguments: A FILE pointer that points to the image that will be parsed.
+Purpose: This function will load a pnm reader to parse the pgm, assert that
+it is a pbm, and transfer all the numbers to a newly allocated UArray.  It
+will return a pointer to that new UArray
+*************************************************/
+void check_file(FILE* fp, UArray2_T sudoku);
+/*************************************************
+Function:check_boxes
+Arguments: A UArray pointer that holds the sudoku information
+Purpose: This function will check the 9 sub-boxes of the 9x9 sudoku
+board to make sure that those small 3x3 squares have no overlap in
+terms of intensity.  If they do have overlap, it will throw out a
+CRE and exit(1).
+*************************************************/
+void check_boxes(UArray2_T sudoku);
+/*************************************************
+Function:check_linear_values
+Arguments: A UArray pointer that holds the sudoku information,
+modularity integer that switches between horizontal and vertical checks
+Purpose: This function will check the 9 rows and 9 columns to make sure
+that no intensity appears twice in 2-D Array.  If any do, the function
+will throw a CDE and exit(1).  This function incorporates both vertical
+and horizontal functions which slimmed down our code significantly.
+*************************************************/
+void check_linear_values(UArray2_T sudoku, int modular);
+
+
+int main(int argc, char *argv[]) {
+  UArray2_T sudoku=UArray2_new(9,9, sizeof(unsigned));
+  if (argc == 1) {
+    check_file(stdin, sudoku);
+    check_linear_values(sudoku,0);
+    check_linear_values(sudoku,1);
+    check_boxes(sudoku);
+  } else {
+    for (int i = 1; i < argc; i++) {
+      FILE *fp = fopen(argv[i], "r");
+      if (fp == NULL) {
+        fprintf(stderr, "%s: Could not open file %s for reading\n",
+        argv[0], argv[i]);
+        exit(1);
+      }
+      check_file(fp, sudoku);
+      check_linear_values(sudoku,0);
+      check_linear_values(sudoku,1);
+      check_boxes(sudoku);
+      fclose(fp);
+    }
+  }
+  UArray2_free(sudoku);
+  return 0;
+}
+
+void check_file(FILE* fp, UArray2_T sudoku){
+  Pnmrdr_T image=Pnmrdr_new(fp);
+  Pnmrdr_mapdata data=Pnmrdr_data(image);
+  assert(data.height==9 && data.width==9);
+  assert(data.type==2);
+  assert(data.denominator==9);
+  UArray2_map_row_major(sudoku, set_sudoku_values, image);
+  Pnmrdr_free(&image);
+}
+
+static void set_sudoku_values(void * element, void * pnmfile){
+  Pnmrdr_T image_file=(Pnmrdr_T)pnmfile;
+  unsigned* UArray2_element=(unsigned*)element;
+  unsigned temp=Pnmrdr_get(image_file);
+  assert(temp<10 && temp>0);
+  *UArray2_element=temp;
+}
+
+void check_linear_values(UArray2_T sudoku, int modular){
+  for(int i=0; i<9; i++){
+    int counter=0;
+    UArray_T temp_values=UArray_new(9, sizeof(unsigned));
+    for(int k=0; k<9; k++){
+      unsigned* index_element_pointer=NULL;
+      //this is the modularity in action.  If the modular is 1, it will
+      //check columns, else it will check rows for double intensities
+      if(modular==1){ index_element_pointer=UArray2_at(sudoku, k, i);
+      } else { index_element_pointer=UArray2_at(sudoku, i, k);}
+      unsigned index_element=*index_element_pointer;
+      for(int l=0; l<counter; l++){
+        unsigned* previous_number_pointer=(unsigned*)UArray_at(temp_values, l);
+        unsigned previous_number=*previous_number_pointer;
+        assert(index_element!=previous_number);
+      }
+      unsigned* temp_pointer=UArray_at(temp_values, counter);
+      *temp_pointer=index_element;
+      counter++;
+    }
+    UArray_free(&temp_values);
+  }
+}
+
+void check_boxes(UArray2_T sudoku){
+  //this algorithm takes the northwest-most of coordinates and then checks
+  //the respective boxes using those as starting points.  Therefore, we
+  //check (0,0),(0,3),(0,6), (3,0), (3,3), (3,6) etc. to make sure all
+  //the boxes are clean of double intensities
+  for(int i=0; i<9; i+=3){
+    for(int k=0;k<9; k+=3){
+      int counter=0;
+      UArray_T temp_values=UArray_new(9, sizeof(unsigned));
+      for(int y=0; y<3; y++){
+        for(int z=0; z<3; z++){
+          unsigned* index_element_pointer=NULL;
+          index_element_pointer=UArray2_at(sudoku, k+y, i+z);
+          unsigned index_element=*index_element_pointer;
+          for(int l=0; l<counter; l++){
+            unsigned* previous_number_pointer=(unsigned*)UArray_at(temp_values, 
+              l);
+            unsigned previous_number=*previous_number_pointer;
+            assert(index_element!=previous_number);
+          }
+          unsigned* temp_pointer=UArray_at(temp_values, counter);
+          *temp_pointer=index_element;
+          counter++;
+        }
+      }
+      UArray_free(&temp_values);
+    }
+  }
+}

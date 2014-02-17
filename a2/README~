@@ -1,0 +1,66 @@
+README - SUDOKU AND UNBLACKEDGES
+Tim Alander and Spencer Meldrum
+
+We spent approximately 8 hours on this assignment, with help from Inbar (TA),
+Ben (TA), and Eliot (TA).
+
+============
+SUDOKU
+============
+
+Our solution is fully functional.
+
+1) We are representing a Sudoku puzzle as a 9x9 grid of numbers between the range
+   of 0<x<10 (non-inclusive). The program then checks the puzzle to see if it
+   is a valid solution.
+  
+2) SEE sudoku.c
+
+4) We will use a two-dimensional array of integers, implemented as UArray2_T in C,
+   to store the Sudoku puzzle.
+  
+   INVARIANTS:
+  
+   - A xy coordinate pair will only coorespond to one index in the linear
+     implementation
+     
+   A VALID solution has the following invariants:
+  
+   - Numbers may only be between 0<x<10 (non-inclusive)
+  
+   - The sum of each row must be 45.
+  
+   - The sum of each column must be 45.
+  
+   - The sum of each 3x3 box (like a tic-tac-toe board) must be 45.
+  
+   - The grid must be 9x9
+  
+  
+
+  
+============
+UNBLACKEDGES
+============
+
+Our solution is fully functional.
+
+1) We are representing a black and white image as a grid of numbers
+   (either 1 or 0, respectively). The program then removes and black pixels on
+   the edges, as well as any black pixels touching a black edge pixel.
+  
+2) SEE unblackedges.c
+
+4) We will use a two dimensional bit-vector, implemented as Bit2_T in C, to
+   store the PBM file provided.
+  
+   INVARIANTS
+  
+   - A xy coordinate pair will only coorespond to one index in the linear
+     implementation.
+     
+   - Any black pixel that is not on the edge, but is touching a black pixel (or
+   group of black pixels) that is on the edge, will be treated as though it
+   were a black edge pixel.
+  
+   - The image file is only represented by bits (0 or 1).

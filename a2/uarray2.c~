@@ -1,0 +1,80 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include "mem.h"
+#include "assert.h"
+#include "uarray2.h"
+
+struct UArray2_T {
+  UArray_T Linear_Array; // Linear representation of the 2D array
+  int array_Rows; // will be set by UArray2_new
+  int array_Columns; // will be set by UArray2_new
+};
+
+
+UArray2_T UArray2_new(int columns, int rows, int size){
+  UArray2_T newArray = NEW(newArray);
+  newArray->Linear_Array=UArray_new(columns*rows, size);
+  newArray->array_Rows=rows;
+  newArray->array_Columns=columns;
+  return newArray;
+}
+
+void* UArray2_at(UArray2_T t, int column, int row){
+  assert(t!=NULL);
+  int temp_column=t->array_Columns; // temporary variable to store total number
+  // of columns in the array provided
+  
+  // converts 2D coordinate into linear index and returns value                                 
+  return UArray_at(t->Linear_Array,row*temp_column+column);
+}
+
+
+int UArray2_Rows(UArray2_T t){
+  assert(t!=NULL);
+  return t->array_Rows;
+}
+
+
+int UArray2_Columns(UArray2_T t){
+  assert(t!=NULL);
+  return t->array_Columns;
+}
+
+
+int UArray2_length(UArray2_T t){
+  assert(t!=NULL);
+  int columns=t->array_Columns;
+  int rows=t->array_Rows;
+  return columns*rows;
+}
+
+
+void UArray2_map_column_major(UArray2_T t, void apply(void* element, void* cl), 
+  void *cl){
+  assert(t!=NULL);
+  int max_Row=(t->array_Rows);
+  int max_Column=(t->array_Columns);
+  for(int i=0; i<max_Column; i++){
+    for(int k=0;k<max_Row; k++){
+      apply(UArray2_at(t, i, k), cl);
+    }
+  }
+  (void)cl;
+  
+}
+
+
+void UArray2_map_row_major(UArray2_T t, void apply(void* element, void* cl),
+void *cl){
+  assert(t!=NULL);
+  for(int i=0; i<UArray2_length(t); i++){
+    apply(UArray_at(t->Linear_Array, i), cl);
+  }
+}
+
+
+void UArray2_free(UArray2_T t){
+  assert(t!=NULL);
+  UArray_free(&t->Linear_Array);
+  free(t);
+}

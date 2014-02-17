@@ -1,0 +1,7 @@
+#include "uarray2.h"
+
+int main {
+  UArray2_T temp=UArray2_new(4, 5, sizeof(int));
+  UArray2_free(temp);
+  return 0;
+}

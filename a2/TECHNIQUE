@@ -1,0 +1,24 @@
+Assignment 2: Part E
+A Technique We Hope to Develop
+As Comp 40 students who are becoming more fluent in programming and its 
+concepts, sometimes we feel as if one of our main hindrances is the
+environment in which we are working with the code.  Although we find
+that the Kate Editor is aesthetically pleasing and allows us to
+compile within the interface, many past Comp 40 students (and current
+TA's) recommend VIM as a next step in our development as computer
+programmers.
+Because of this, we have researched some of the components that make
+VIM so invaluable to computer programmers.  Some benefits include:
+- The rich library of macros available to use at our disposal.  Although
+it might take a bit to learn, it can make certain aspects of coding (copy
+/pasting lines of code, duplicating lines, automated search and replace, 
+etc.) so much more streamlined, and thus makes the burden of actually putting
+ down on the text editor diminish quite a bit.
+- VIM is a modal editor, meaning it has two "input" modes: insert and normal.
+Insert mode behaves as any regular editor would: any character you type will
+appear on the screen as well.  However, in normal mode, all characters you
+type will be macros that correspond to commands that manipulate the text.
+This allows for a CLI in which your hands never leave the keyboard, which is
+invaluable to any programmer.
+To follow through with this goal, we plan on checking out the VIM Adventures
+page to get our sea legs with it, and then using vim for the next project.
